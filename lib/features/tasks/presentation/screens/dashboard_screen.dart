@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_manager/core/network/connectivity_cubit.dart';
 import 'package:task_manager/features/tasks/presentation/screens/add_task_screen.dart';
+import 'package:task_manager/features/theme/theme_cubit.dart';
 import '../task_bloc/task_bloc.dart';
 import '../task_bloc/task_event.dart';
 import '../task_bloc/task_state.dart';
@@ -48,9 +50,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F6),
+      // backgroundColor: const Color(0xFFF5F7F6),
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.brightness_6,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          onPressed: () {
+            context.read<ThemeCubit>().toggleTheme();
+          },
+        ),
         title: const Text("My Tasks"),
         backgroundColor: const Color(0xFF5FB3A8),
         actions: [
@@ -203,6 +215,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
               },
             ),
           ),
+          BlocListener<ConnectivityCubit, bool>(
+            listener: (context, isOnline) {
+              if (!isOnline) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("⚠️ You are offline"),
+                    backgroundColor: Colors.red,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("✅ Back online"),
+                    backgroundColor: Colors.green,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+            child: Scaffold(
+              // your existing scaffold
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -221,45 +257,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildControls() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        children: [
-          /// FILTER DROPDOWN
-          Expanded(
-            child: DropdownButton<String>(
-              value: "all",
-              isExpanded: true,
-              items: const [
-                DropdownMenuItem(value: "all", child: Text("All")),
-                DropdownMenuItem(value: "completed", child: Text("Completed")),
-                DropdownMenuItem(value: "pending", child: Text("Pending")),
-              ],
-              onChanged: (value) {
-                context.read<TaskBloc>().add(ApplyFilter(value!));
-              },
-            ),
-          ),
+      child: Expanded(
+        child: BlocBuilder<TaskBloc, TaskState>(
+          builder: (context, state) {
+            final tasks = state.allTasks;
+            final completed = tasks.where((t) => t.isCompleted).length;
+            final pending = tasks.length - completed;
 
-          const SizedBox(width: 10),
-
-          /// SORT DROPDOWN
-          Expanded(
-            child: DropdownButton<String>(
-              hint: const Text("Sort By"),
-              isExpanded: true,
-              items: const [
-                DropdownMenuItem(value: "dueDate", child: Text("Due Date")),
-                DropdownMenuItem(value: "priority", child: Text("Priority")),
-                DropdownMenuItem(
-                  value: "createdAt",
-                  child: Text("Created Date"),
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FilterChip(
+                  label: Text("All (${tasks.length})"),
+                  selected: state.filter == "all",
+                  onSelected: (_) {
+                    context.read<TaskBloc>().add(ApplyFilter("all"));
+                  },
+                ),
+                FilterChip(
+                  label: Text("Completed ($completed)"),
+                  selected: state.filter == "completed",
+                  onSelected: (_) {
+                    context.read<TaskBloc>().add(ApplyFilter("completed"));
+                  },
+                ),
+                FilterChip(
+                  label: Text("Pending ($pending)"),
+                  selected: state.filter == "pending",
+                  onSelected: (_) {
+                    context.read<TaskBloc>().add(ApplyFilter("pending"));
+                  },
                 ),
               ],
-              onChanged: (value) {
-                context.read<TaskBloc>().add(SortTasks(value!));
-              },
-            ),
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }

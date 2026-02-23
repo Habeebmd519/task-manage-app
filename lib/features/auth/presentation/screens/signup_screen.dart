@@ -28,7 +28,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
@@ -136,7 +136,10 @@ class _AuthScreenState extends State<AuthScreen> {
                               },
                               child: Text(
                                 state.isLogin ? "Login" : "Sign Up",
-                                style: const TextStyle(fontSize: 16),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                           ),
@@ -172,13 +175,14 @@ class _AuthScreenState extends State<AuthScreen> {
     bool obscure = false,
   }) {
     return TextFormField(
+      style: TextStyle(color: Colors.black),
       controller: controller,
       obscureText: obscure,
       validator: validator,
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Color(0xFFF5F7F6),
+        fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 18,

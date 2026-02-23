@@ -1,13 +1,21 @@
-import 'models/task_model.dart';
+import 'package:hive/hive.dart';
+import 'package:task_manager/features/tasks/data/models/task_model.dart';
 
 class TaskLocalCache {
-  List<TaskModel> _cachedTasks = [];
+  final box = Hive.box('tasks');
 
   void saveTasks(List<TaskModel> tasks) {
-    _cachedTasks = tasks;
+    box.put('tasks', tasks.map((e) => e.toJson()).toList());
   }
 
-  List<TaskModel> getTasks() => _cachedTasks;
+  List<TaskModel> getTasks() {
+    final data = box.get('tasks', defaultValue: []);
+    return List<TaskModel>.from(
+      data.map((e) => TaskModel.fromJson(Map<String, dynamic>.from(e))),
+    );
+  }
 
-  void clear() => _cachedTasks.clear();
+  void clear() {
+    box.delete('tasks');
+  }
 }

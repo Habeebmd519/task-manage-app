@@ -11,7 +11,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     print("WELCOME SCREEN OPENED");
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) => Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -91,9 +91,11 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                         onPressed: () {
                           Navigator.pushNamed(context, "/AuthScreen");
-                          context.read<AuthBloc>().add(ToggleAuthMode());
                         },
-                        child: const Text("Login"),
+                        child: const Text(
+                          "Login",
+                          style: TextStyle(color: Color(0xFF5FB3A8)),
+                        ),
                       ),
                     ),
                     Spacer(),
