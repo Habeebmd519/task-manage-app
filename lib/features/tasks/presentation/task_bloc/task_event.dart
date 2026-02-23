@@ -1,42 +1,57 @@
-import 'package:equatable/equatable.dart';
+abstract class TaskEvent {}
 
-abstract class TaskEvent extends Equatable {
-  const TaskEvent();
+class LoadTasks extends TaskEvent {
+  final String userId;
 
-  @override
-  List<Object?> get props => [];
+  LoadTasks(this.userId);
 }
 
-/// Load tasks (listen to Firestore stream)
-class LoadTasks extends TaskEvent {}
+class LoadMoreTasks extends TaskEvent {}
 
-/// Add new task
-class AddTask extends TaskEvent {
-  final String title;
+class RefreshTasks extends TaskEvent {}
 
-  const AddTask(this.title);
-
-  @override
-  List<Object?> get props => [title];
+class ApplyFilter extends TaskEvent {
+  final String filter; // all, completed, pending
+  ApplyFilter(this.filter);
 }
 
-/// Delete task
+class SearchTask extends TaskEvent {
+  final String query;
+  SearchTask(this.query);
+}
+
+class SortTasks extends TaskEvent {
+  final String sortBy; // dueDate, priority, createdAt
+  SortTasks(this.sortBy);
+}
+
+/// delete task
+
 class DeleteTask extends TaskEvent {
-  final String id;
+  final String taskId;
 
-  const DeleteTask(this.id);
-
-  @override
-  List<Object?> get props => [id];
+  DeleteTask(this.taskId);
 }
 
-/// Toggle complete
-class ToggleTask extends TaskEvent {
-  final String id;
-  final bool currentStatus;
+/// update task
+class ToggleTaskStatus extends TaskEvent {
+  final String taskId;
+  final bool isCompleted;
 
-  const ToggleTask(this.id, this.currentStatus);
+  ToggleTaskStatus({required this.taskId, required this.isCompleted});
+}
 
-  @override
-  List<Object?> get props => [id, currentStatus];
+/// create task
+class CreateTask extends TaskEvent {
+  final String title;
+  final String priority;
+  final DateTime dueDate;
+  final String category;
+
+  CreateTask({
+    required this.title,
+    required this.priority,
+    required this.dueDate,
+    required this.category,
+  });
 }

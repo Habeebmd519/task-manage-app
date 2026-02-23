@@ -1,30 +1,31 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class TaskModel {
   final String id;
   final String title;
+  final String priority;
+  final String category;
+  final DateTime dueDate;
+  final DateTime createdAt;
   final bool isCompleted;
-  final Timestamp createdAt;
 
   TaskModel({
     required this.id,
     required this.title,
-    required this.isCompleted,
+    required this.priority,
+    required this.category,
+    required this.dueDate,
     required this.createdAt,
+    required this.isCompleted,
   });
 
-  factory TaskModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-
+  factory TaskModel.fromJson(Map<String, dynamic> json) {
     return TaskModel(
-      id: doc.id,
-      title: data['title'] ?? '',
-      isCompleted: data['isCompleted'] ?? false,
-      createdAt: data['createdAt'] ?? Timestamp.now(),
+      id: json['id'].toString(),
+      title: json['title'],
+      priority: json['priority'],
+      category: json['category'],
+      dueDate: DateTime.parse(json['due_date']),
+      createdAt: DateTime.parse(json['created_at']),
+      isCompleted: json['is_completed'],
     );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {'title': title, 'isCompleted': isCompleted, 'createdAt': createdAt};
   }
 }

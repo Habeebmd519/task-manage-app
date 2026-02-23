@@ -1,24 +1,78 @@
-import 'models/task_model.dart';
-import 'task_service.dart';
+import 'package:task_manager/features/tasks/data/local_cache.dart';
+import 'package:task_manager/features/tasks/data/models/task_model.dart';
+import 'package:task_manager/features/tasks/data/task_service.dart';
 
 class TaskRepository {
-  final TaskService _service;
+  final TaskService service;
+  final TaskLocalCache cache;
 
-  TaskRepository(this._service);
+  TaskRepository(this.service, this.cache);
 
-  Stream<List<TaskModel>> getTasks() {
-    return _service.getTasks();
+  Future<List<TaskModel>> getTasks({
+    required String userId,
+    required int skip,
+    required int limit,
+  }) async {
+    try {
+      final tasks = await service.fetchTasks(
+        userId: userId,
+        skip: skip,
+        limit: limit,
+      );
+
+      if (skip == 0) {
+        cache.saveTasks(tasks);
+      } else {
+        cache.saveTasks([...cache.getTasks(), ...tasks]);
+      }
+
+      return cache.getTasks();
+    } catch (e) {
+      return cache.getTasks();
+    }
   }
 
-  Future<void> addTask(String title) {
-    return _service.addTask(title);
+  /// delete task
+
+  Future<void> deleteTask({required String taskId, required String userId}) {
+    return service.deleteTask(taskId: taskId, userId: userId);
   }
 
-  Future<void> deleteTask(String id) {
-    return _service.deleteTask(id);
+  /// update task
+  Future<void> updateTask({
+    required String taskId,
+    required String userId,
+    required String title,
+    required String priority,
+    required String category,
+    required DateTime dueDate,
+    required bool isCompleted,
+  }) {
+    return service.updateTask(
+      taskId: taskId,
+      userId: userId,
+      title: title,
+      priority: priority,
+      category: category,
+      dueDate: dueDate,
+      isCompleted: isCompleted,
+    );
   }
 
-  Future<void> toggleTask(String id, bool currentStatus) {
-    return _service.toggleTask(id, currentStatus);
+  ///create task
+  Future<void> createTask({
+    required String userId,
+    required String title,
+    required String priority,
+    required DateTime dueDate,
+    required String category,
+  }) {
+    return service.createTask(
+      userId: userId,
+      title: title,
+      priority: priority,
+      dueDate: dueDate,
+      category: category,
+    );
   }
 }

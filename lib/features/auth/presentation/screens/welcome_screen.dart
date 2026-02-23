@@ -9,6 +9,7 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("WELCOME SCREEN OPENED");
     return Scaffold(
       backgroundColor: Colors.white,
       body: BlocBuilder<AuthBloc, AuthState>(

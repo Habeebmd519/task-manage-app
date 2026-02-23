@@ -6,6 +6,7 @@ import 'package:task_manager/features/auth/presentation/auth_bloc/auth_bloc.dart
 import 'package:task_manager/features/auth/presentation/screens/signup_screen.dart';
 
 import 'package:task_manager/features/auth/presentation/screens/welcome_screen.dart';
+import 'package:task_manager/features/tasks/data/local_cache.dart';
 import 'package:task_manager/features/tasks/data/task_repository.dart';
 import 'package:task_manager/features/tasks/data/task_service.dart';
 import 'package:task_manager/features/tasks/presentation/screens/dashboard_screen.dart';
@@ -22,7 +23,10 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => AuthBloc(AuthService())),
-        BlocProvider(create: (_) => TaskBloc(TaskRepository(TaskService()))),
+        BlocProvider(
+          create: (_) =>
+              TaskBloc(TaskRepository(TaskService(), TaskLocalCache())),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -36,7 +40,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: DashboardScreen(),
+      home: WelcomeScreen(),
       routes: {
         "/dashboard": (context) => (DashboardScreen()),
         "/AuthScreen": (context) => AuthScreen(),
