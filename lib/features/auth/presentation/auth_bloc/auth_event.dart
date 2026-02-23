@@ -9,3 +9,5 @@ class SubmitAuth extends AuthEvent {
 
   SubmitAuth({required this.email, required this.password, this.name});
 }
+
+class LogoutRequested extends AuthEvent {}

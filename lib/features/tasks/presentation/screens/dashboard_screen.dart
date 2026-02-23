@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/core/network/connectivity_cubit.dart';
+import 'package:task_manager/features/auth/presentation/auth_bloc/auth_bloc.dart';
+import 'package:task_manager/features/auth/presentation/auth_bloc/auth_event.dart';
+import 'package:task_manager/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:task_manager/features/tasks/presentation/screens/add_task_screen.dart';
 import 'package:task_manager/features/theme/theme_cubit.dart';
 import '../task_bloc/task_bloc.dart';
@@ -75,7 +78,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, "/");
+                context.read<AuthBloc>().add(LogoutRequested());
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+                  (route) => false,
+                );
               },
             ),
           ],

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/features/auth/presentation/auth_bloc/auth_bloc.dart';
 import 'package:task_manager/features/auth/presentation/auth_bloc/auth_event.dart';
 import 'package:task_manager/features/auth/presentation/auth_bloc/auth_state.dart';
+import 'package:task_manager/features/auth/presentation/screens/signup_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -67,7 +68,10 @@ class WelcomeScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.pushNamed(context, "/AuthScreen");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => AuthScreen()),
+                          );
                           context.read<AuthBloc>().add(ToggleAuthMode());
                         },
                         child: const Text(
@@ -90,7 +94,10 @@ class WelcomeScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.pushNamed(context, "/AuthScreen");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => AuthScreen()),
+                          );
                         },
                         child: const Text(
                           "Login",

@@ -32,5 +32,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
       }
     });
+    on<LogoutRequested>((event, emit) async {
+      emit(state.copyWith(status: AuthStatus.loading));
+      try {
+        await authService.signOut();
+        // Reset state to initial on logout
+        emit(AuthState(status: AuthStatus.initial));
+      } catch (e) {
+        emit(
+          state.copyWith(status: AuthStatus.error, errorMessage: e.toString()),
+        );
+      }
+    });
   }
 }

@@ -57,4 +57,13 @@ class AuthService {
         return e.message ?? "Authentication failed.";
     }
   }
+
+  /// LOGOUT
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+    } catch (e) {
+      throw "Logout failed. Please try again.";
+    }
+  }
 }

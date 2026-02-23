@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/features/auth/presentation/auth_bloc/auth_bloc.dart';
 import 'package:task_manager/features/auth/presentation/auth_bloc/auth_event.dart';
 import 'package:task_manager/features/auth/presentation/auth_bloc/auth_state.dart';
+import 'package:task_manager/features/tasks/presentation/screens/dashboard_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -33,7 +34,10 @@ class _AuthScreenState extends State<AuthScreen> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state.status == AuthStatus.success) {
-              Navigator.pushReplacementNamed(context, "/dashboard");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => DashboardScreen()),
+              );
             }
 
             if (state.status == AuthStatus.error) {
