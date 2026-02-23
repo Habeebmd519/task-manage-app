@@ -1,20 +1,19 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:task_manager/core/AuthGateWay/auth_gate_way.dart';
+
 import 'package:task_manager/core/network/connectivity_cubit.dart';
+
 import 'package:task_manager/features/auth/data/auth_service.dart';
 import 'package:task_manager/features/auth/presentation/auth_bloc/auth_bloc.dart';
-import 'package:task_manager/features/auth/presentation/screens/signup_screen.dart';
 
-import 'package:task_manager/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:task_manager/features/tasks/data/local_cache.dart';
 import 'package:task_manager/features/tasks/data/task_repository.dart';
 import 'package:task_manager/features/tasks/data/task_service.dart';
-import 'package:task_manager/features/tasks/presentation/screens/dashboard_screen.dart';
-
 import 'package:task_manager/features/tasks/presentation/task_bloc/task_bloc.dart';
+
 import 'package:task_manager/features/theme/theme_cubit.dart';
 import 'package:task_manager/features/theme/theme_service.dart';
 
@@ -22,9 +21,14 @@ import 'package:task_manager/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize Hive
   await Hive.initFlutter();
   await Hive.openBox('tasks');
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -47,15 +51,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeMode>(
-      builder: (context, state) {
+      builder: (context, themeMode) {
         return MaterialApp(
-          themeMode: state,
           debugShowCheckedModeBanner: false,
-          home: WelcomeScreen(),
-          routes: {
-            "/dashboard": (context) => (DashboardScreen()),
-            "/AuthScreen": (context) => AuthScreen(),
-          },
+          themeMode: themeMode,
+
+          // 🔥 IMPORTANT: Use AuthGate
+          home: const AuthGate(),
+
           theme: ThemeData(
             brightness: Brightness.light,
             primaryColor: const Color(0xFF5FB3A8),
